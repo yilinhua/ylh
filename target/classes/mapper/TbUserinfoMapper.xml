@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.TbUserinfoMapper">
+	<resultMap id="userMap" type="tbUserinfo" autoMapping="true">
+		<id column="userid" property="userid" />
+		<association property="tbDepartment" javaType="tbDepartment">
+			<id column="deptid" property="deptid" />
+			<result column="deptname" property="deptname" />
+		</association>
+	</resultMap>
+	<select id="selectUserAccount" resultMap="userMap">
+		select * from
+		tb_userinfo where userAccount =
+		#{userAccount}
+	</select>
+	<select id="select" resultMap="userMap">
+		select * from tb_userinfo u inner
+		join tb_department d on u.deptId =
+		d.deptid where delFlag = 0
+		<if test="userAccount != null and userAccount != ''">
+			and userAccount like CONCAT('%',#{userAccount},'%')
+		</if>
+		<if test="deptId != null and deptId != 0">
+			and u.deptId = #{deptId}
+		</if>
+		order by userid
+	</select>
+	<select id="selectById" resultMap="userMap">
+		select * from tb_userinfo
+		where userid = #{userid}
+	</select>
+	<insert id="insert">
+		insert into tb_userinfo
+		(userAccount,
+		password,
+		email,
+		deptId, createDate,
+		delFlag,
+		image)
+		values (
+		#{userAccount}, #{password},
+		#{email},
+		#{deptId}, now(),
+		0, #{image})
+	</insert>
+	<update id="updateByid">
+		update tb_userinfo
+		set
+		`password` = #{password},
+		email =
+		#{email},
+		deptId = #{deptId}
+		where userid =
+		#{userid}
+	</update>
+	<update id="deleteByid">
+		update tb_userinfo
+		set delFlag = 1
+		where userid =
+		#{userid}
+	</update>
+</mapper>
